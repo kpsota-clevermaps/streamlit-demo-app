@@ -40,7 +40,7 @@ def draw_map():
         'filter_by': filter_by
     }
 
-    rows_results = wrappers.query(st.session_state.cm_session, query_json)
+    rows_results = wrappers.query(st.session_state.cm_session, query_json, 1000)
     data = query_result_to_pd_data(rows_results)
 
     df = pd.DataFrame(data=data)
