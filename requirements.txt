@@ -1,0 +1,4 @@
+pandas==1.2.3
+pydeck==0.7.1
+streamlit==1.10.0
+git+https://kpsota:cSzx98CA7rzFgpRmePdc@bitbucket.org/clevermaps/cm-python-sdk.git
