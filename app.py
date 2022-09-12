@@ -73,9 +73,9 @@ def test():
 
 def main():
 
-    project_id = "djflqntshvfj8efm"
-    dwh_id = "viw8l4"
-    access_token = "4sswi4oybs7KxHEOcxkDulz1zf_Ot5wGPqw8jxApVXM"
+    project_id = st.secrets["cm_project_id"]
+    dwh_id = st.secrets["cm_dwh_id"]
+    access_token = st.secrets["cm_access_token"]
     server_url = "https://secure.clevermaps.io"
 
     cm_session = session.Session(project_id, dwh_id, access_token, server_url)
