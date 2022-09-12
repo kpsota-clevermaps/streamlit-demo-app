@@ -19,6 +19,18 @@ def query_result_to_pd_data(metric_results):
 
     return data
 
+def get_data():
+
+    pass
+
+
+def render_table():
+
+    pass
+
+def render_plot():
+
+    pass
 
 def draw_map():
 
@@ -53,6 +65,8 @@ def draw_map():
     df["radius"] = df["weight"].apply(lambda weight: weight+10)
     color_lookup = pdk.data_utils.assign_random_colors(df['subtype_name'])
     df['color'] = df.apply(lambda row: color_lookup.get(row['subtype_name']), axis=1)
+
+    st.session_state.data = df
 
     st.session_state.map_placeholder = st.pydeck_chart(pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
@@ -116,9 +130,31 @@ def main():
     map_placeholder = st.empty()
     st.session_state.map_placeholder = map_placeholder
 
+    chart_placeholder = st.empty()
+    st.session_state.chart_placeholder = chart_placeholder
+
+    table_placeholder = st.empty()
+    st.session_state.table_placeholder = table_placeholder
+
     draw_map()
 
-    #components.iframe('https://secure.clevermaps.io/#/v40dvff322hpko0e/map/review_view', width=1280, height=720)
+    query_json = {
+        'properties': ['poi_dwh.subtype_name'],
+        'metrics': ["pois_count_metric"],
+        'filter_by': [
+            {
+                "property": "poi_dwh.subtype_name",
+                "operator": "in",
+                "value": st.session_state.poi_subtype_selected
+            }
+        ]
+    }
+    poi_subtypes_counts = wrappers.query(st.session_state.cm_session, query_json)
+    poi_subtypes_counts_df = query_result_to_pd_data(poi_subtypes_counts)
+
+    #st.session_state.chart_placeholder = st.bar_chart(poi_subtypes_counts_df)
+
+    st.session_state.table_placeholder = st.dataframe(poi_subtypes_counts_df)
 
     #st.write(st.session_state)
 
