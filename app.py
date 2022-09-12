@@ -93,8 +93,8 @@ def main():
     cm_prop_values = dwh.PropertyValues(cm_session)
     poi_subtypes = cm_prop_values.get_property_values('poi_dwh.subtype_name')
 
-    #st.selectbox('Select POI subtype to display', poi_subtypes, index=0, key='poi_subtype_selected')
-    st.multiselect('Select POI subtype to display', poi_subtypes, key='poi_subtype_selected')
+    st.selectbox('Select POI subtype to display', poi_subtypes, index=0, key='poi_subtype_selected')
+    #st.multiselect('Select POI subtype to display', poi_subtypes, key='poi_subtype_selected')
 
     map_placeholder = st.empty()
     st.session_state.map_placeholder = map_placeholder
@@ -103,7 +103,7 @@ def main():
 
     #components.iframe('https://secure.clevermaps.io/#/v40dvff322hpko0e/map/review_view', width=1280, height=720)
 
-    st.write(st.session_state)
+    #st.write(st.session_state)
 
 
 
