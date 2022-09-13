@@ -5,7 +5,7 @@
 import streamlit as st
 import pandas as pd
 import pydeck as pdk
-from cm_sdk import session, wrappers
+from clevermaps_sdk import sdk
 
 
 def query_result_to_pd_data(metric_results):
@@ -51,7 +51,7 @@ def draw_map():
         "filter_by": filter_by
     }
 
-    rows_results = wrappers.query(st.session_state.cm_session, query_json, 20000)
+    rows_results = st.session_state.cm_sdk.query(query_json, 20000)
     data = query_result_to_pd_data(rows_results)
 
     df = pd.DataFrame(data=data)
@@ -90,6 +90,7 @@ def draw_map():
             )
         ],
         tooltip={"text": "POI type: {type_name} \n POI subtype: {subtype_name} \n Name: {name} \n "}
+
         # tooltip={
         #     "html": "<b>adresse:</b> {address}"
         #             "<br/> <b>mape:</b> {pourc_err}"
@@ -111,14 +112,14 @@ def main():
     access_token = st.secrets["cm_access_token"]
     server_url = "https://secure.clevermaps.io"
 
-    cm_session = session.Session(project_id, dwh_id, access_token, server_url)
-    st.session_state.cm_session = cm_session
+    cm_sdk = sdk.Sdk(project_id, dwh_id, access_token, server_url)
+    st.session_state.cm_sdk = cm_sdk
 
     st.set_page_config(layout="wide")
 
     st.title('CleverMaps Demo Data App')
 
-    poi_subtypes = wrappers.get_property_values(cm_session, 'poi_dwh.subtype_name')
+    poi_subtypes = cm_sdk.get_property_values('poi_dwh.subtype_name')
 
     #st.selectbox('Select POI subtype to display', poi_subtypes, index=10, key='poi_subtype_selected')
     st.multiselect('Select POI subtype to display',
@@ -149,10 +150,51 @@ def main():
             }
         ]
     }
-    poi_subtypes_counts = wrappers.query(st.session_state.cm_session, query_json)
+    poi_subtypes_counts = cm_sdk.query(query_json)
     poi_subtypes_counts_df = query_result_to_pd_data(poi_subtypes_counts)
 
-    #st.session_state.chart_placeholder = st.bar_chart(poi_subtypes_counts_df)
+    vega_chart_config = {
+      "width": 300,
+      "encoding": {
+            "y": {
+                "field": "poi_dwh_subtype_name",
+                "type": "nominal",
+                "title": None,
+                "axis": {
+                    "domain": False,
+                    "grid": False,
+                    "ticks": False
+                }
+            },
+            "x": {
+                "field": "pois_count_metric",
+                "type": "quantitative",
+                "title": None,
+                "axis": {
+                    "domain": False,
+                    "grid": False,
+                    "ticks": False,
+                    "labels": False
+                }
+            }
+          },
+        "layer": [{
+            "mark": "bar"
+        }, {
+            "mark": {
+                "type": "text",
+                "align": "left",
+                "baseline": "middle",
+                "dx": 3
+            },
+            "encoding": {
+                "text": {"field": "pois_count_metric", "type": "quantitative"}
+            }
+        }]
+    }
+
+
+    #st.session_state.chart_placeholder = st.vega_lite_chart(poi_subtypes_counts_df, vega_chart_config)
 
     st.session_state.table_placeholder = st.dataframe(poi_subtypes_counts_df)
 
