@@ -1,5 +1,5 @@
 """
-# Streamlit demo app of usage with CleverMaps API
+# Streamlit + CleverMaps API demo app
 """
 
 import streamlit as st
@@ -52,9 +52,9 @@ def draw_map():
     }
 
     rows_results = st.session_state.cm_sdk.query(query_json, 20000)
-    data = query_result_to_pd_data(rows_results)
+    #data = query_result_to_pd_data(rows_results)
 
-    df = pd.DataFrame(data=data)
+    df = pd.DataFrame(data=rows_results)
     df = df.rename(columns={'poi_dwh_name': 'name',
                             'poi_dwh_lng': 'lng',
                             'poi_dwh_lat': 'lat',
@@ -151,7 +151,8 @@ def main():
         ]
     }
     poi_subtypes_counts = cm_sdk.query(query_json)
-    poi_subtypes_counts_df = query_result_to_pd_data(poi_subtypes_counts)
+    poi_subtypes_counts_df = poi_subtypes_counts
+    #poi_subtypes_counts_df = query_result_to_pd_data(poi_subtypes_counts)
 
     vega_chart_config = {
       "width": 300,
