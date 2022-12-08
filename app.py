@@ -112,7 +112,7 @@ def main():
     access_token = st.secrets["cm_access_token"]
     server_url = "https://secure.clevermaps.io"
 
-    cm_sdk = sdk.Sdk(project_id, dwh_id, access_token, server_url)
+    cm_sdk = sdk.Sdk(access_token, project_id)
     st.session_state.cm_sdk = cm_sdk
 
     st.set_page_config(layout="wide")
